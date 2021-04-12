@@ -29,9 +29,9 @@ RUN for d in $APP_DIR/patches/*; do \
     done
 
 
-RUN ckan /srv/app/ckan.ini config-tool -e ckan.locale_default=es
-# RUN ckan -c /srv/app/ckan.ini config-tool ckan.datapusher.formats=csv xls xlsx tsv application/csv application/vnd.ms-excel application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
-# RUN ckan -c /srv/app/ckan.ini config-tool ckan.datapusher.url=http://127.0.0.1:8800/
-# RUN ckan -c /srv/app/ckan.ini config-tool ckan.datapusher.assume_task_stale_after=3600
-RUN ckan /srv/app/ckan.ini config-tool -e ckan.auth.create_user_via_api=false
-RUN ckan /srv/app/ckan.ini config-tool -e ckan.auth.create_user_via_web=false
+# RUN ckan /srv/app/ckan.ini config-tool -e ckan.locale_default=es
+# # RUN ckan -c /srv/app/ckan.ini config-tool ckan.datapusher.formats=csv xls xlsx tsv application/csv application/vnd.ms-excel application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
+# # RUN ckan -c /srv/app/ckan.ini config-tool ckan.datapusher.url=http://127.0.0.1:8800/
+# # RUN ckan -c /srv/app/ckan.ini config-tool ckan.datapusher.assume_task_stale_after=3600
+# RUN ckan /srv/app/ckan.ini config-tool -e ckan.auth.create_user_via_api=false
+# RUN ckan /srv/app/ckan.ini config-tool -e ckan.auth.create_user_via_web=false
