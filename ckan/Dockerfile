@@ -15,6 +15,9 @@ RUN cp /usr/share/zoneinfo/$TZ /etc/localtime
 # Install the extension(s) you wrote for your own project
 # RUN pip install -e git+https://github.com/your-org/ckanext-your-extension.git@v1.0.0#egg=ckanext-your-extension
 
+RUN pip install -e git+git://github.com/baldosa/ckanext-mds_theme.git@e3acc0c770ab5c878edb0cf9fbbd09bdcd0efd2c#egg=ckanext-mds_theme && \
+    pip install -r https://raw.githubusercontent.com/baldosa/ckanext-mds_theme/main/requirements.txt
+
 # Apply any patches needed to CKAN core or any of the built extensions (not the
 # runtime mounted ones)
 # See https://github.com/okfn/docker-ckan#applying-patches
@@ -28,10 +31,7 @@ RUN for d in $APP_DIR/patches/*; do \
         fi ; \
     done
 
-
-# RUN ckan /srv/app/ckan.ini config-tool -e ckan.locale_default=es
-# # RUN ckan -c /srv/app/ckan.ini config-tool ckan.datapusher.formats=csv xls xlsx tsv application/csv application/vnd.ms-excel application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
-# # RUN ckan -c /srv/app/ckan.ini config-tool ckan.datapusher.url=http://127.0.0.1:8800/
-# # RUN ckan -c /srv/app/ckan.ini config-tool ckan.datapusher.assume_task_stale_after=3600
-# RUN ckan /srv/app/ckan.ini config-tool -e ckan.auth.create_user_via_api=false
-# RUN ckan /srv/app/ckan.ini config-tool -e ckan.auth.create_user_via_web=false
+# configs
+RUN ckan config-tool /srv/app/ckan.ini -e ckan.locale_default=es
+RUN ckan config-tool /srv/app/ckan.ini -e ckan.auth.create_user_via_api=false
+RUN ckan config-tool /srv/app/ckan.ini -e ckan.auth.create_user_via_web=false
