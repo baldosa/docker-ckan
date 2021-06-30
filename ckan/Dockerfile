@@ -36,3 +36,4 @@ RUN ckan config-tool /srv/app/ckan.ini -e ckan.locale_default=es
 RUN ckan config-tool /srv/app/ckan.ini -e ckan.auth.create_user_via_api=false
 RUN ckan config-tool /srv/app/ckan.ini -e ckan.auth.create_user_via_web=false
 RUN ckan config-tool /srv/app/ckan.ini -e ckan.auth.public_user_details=false
+RUN ckan config-tool /srv/app/ckan.ini -e ckan.max_resource_size=150
