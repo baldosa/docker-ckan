@@ -15,21 +15,21 @@ RUN cp /usr/share/zoneinfo/$TZ /etc/localtime
 # Install the extension(s) you wrote for your own project
 # RUN pip install -e git+https://github.com/your-org/ckanext-your-extension.git@v1.0.0#egg=ckanext-your-extension
 
-RUN pip install -e git+git://github.com/baldosa/ckanext-mds_theme.git@v0.9.0#egg=ckanext-mds_theme && \
+RUN pip install -e git+https://github.com/baldosa/ckanext-mds_theme.git#egg=ckanext-mds_theme && \
     pip install -r https://raw.githubusercontent.com/baldosa/ckanext-mds_theme/main/requirements.txt
 
 # Apply any patches needed to CKAN core or any of the built extensions (not the
 # runtime mounted ones)
 # See https://github.com/okfn/docker-ckan#applying-patches
-COPY patches ${APP_DIR}/patches
+# COPY patches ${APP_DIR}/patches
 
-RUN for d in $APP_DIR/patches/*; do \
-        if [ -d $d ]; then \
-            for f in `ls $d/*.patch | sort -g`; do \
-                cd $SRC_DIR/`basename "$d"` && echo "$0: Applying patch $f to $SRC_DIR/`basename $d`"; patch -p1 < "$f" ; \
-            done ; \
-        fi ; \
-    done
+# RUN for d in $APP_DIR/patches/*; do \
+#         if [ -d $d ]; then \
+#             for f in `ls $d/*.patch | sort -g`; do \
+#                 cd $SRC_DIR/`basename "$d"` && echo "$0: Applying patch $f to $SRC_DIR/`basename $d`"; patch -p1 < "$f" ; \
+#             done ; \
+#         fi ; \
+#     done
 
 # configs
 RUN ckan config-tool /srv/app/ckan.ini -e ckan.locale_default=es && \
