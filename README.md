@@ -1,6 +1,7 @@
 # Docker Compose setup for CKAN
 
-![CKAN Versions](https://img.shields.io/badge/CKAN%20Versions-2.7.11%20|%202.8.8%20|%202.9.3%20-success.svg) ![Docker Pulls](https://img.shields.io/docker/pulls/openknowledge/ckan-base.svg)
+[![CKAN Versions](https://img.shields.io/badge/CKAN%20Versions-2.7.12%20|%202.8.10%20|%202.9.5%20|%20master%20-success.svg)](https://docs.ckan.org/en/latest/changelog.html)
+[![Docker Pulls](https://img.shields.io/docker/pulls/openknowledge/ckan-base.svg)](https://hub.docker.com/r/openknowledge/ckan-base)
 
 
 * [Overview](#overview)
@@ -19,10 +20,12 @@
 
 This is a set of Docker images and configuration files to run a CKAN site.
 
-It is largely based on two existing projects:
-
-* Keitaro's [CKAN Docker images](https://github.com/keitaroinc/docker-ckan)
-* Docker Compose setup currently included in [CKAN core](https://github.com/ckan/ckan)
+| CKAN version | Docker tag production | Docker tag development | Notes |
+| --- | --- | --- | --- |
+| 2.7 | `openknowledge/ckan-base:2.7` | `openknowledge/ckan-dev:2.7` | |
+| 2.8 | `openknowledge/ckan-base:2.8` | `openknowledge/ckan-dev:2.8` | |
+| 2.9 | `openknowledge/ckan-base:2.9` | `openknowledge/ckan-dev:2.9` | If you need Python 2 images use the `2.9-py2` tags (not recommended) |
+| master | `openknowledge/ckan-base:master` | `openknowledge/ckan-dev:master` | The `master` images are updated daily so they might be slightly out of date |
 
 
 It includes the following images, all based on [Alpine Linux](https://alpinelinux.org/):
@@ -30,7 +33,7 @@ It includes the following images, all based on [Alpine Linux](https://alpinelinu
 * CKAN: modified from keitaro/ckan (see [CKAN Images](#ckan-images)) for more details). File uploads are stored in a named volume.
 * DataPusher: modified from keitaro/datapusher
 * PostgreSQL: Official PostgreSQL image. Database files are stored in a named volume.
-* Solr: official Solr image with CKAN's schema. Index data is stored in a named volume.
+* Solr: CKAN's [pre-configured Solr image](https://github.com/ckan/ckan-solr). Index data is stored in a named volume.
 * Redis: standard Redis image
 
 The site is configured via env vars (the base CKAN image loads [ckanext-envvars](https://github.com/okfn/ckanext-envvars)), that you can set in the `.env` file.

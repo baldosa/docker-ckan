@@ -1,6 +1,7 @@
 version: "3"
 
 services:
+<<<<<<< HEAD
   nginx:
     image: nginx:latest
     links:
@@ -10,6 +11,8 @@ services:
       - "443:443"
     volumes:
       - ./nginx/:/etc/nginx/conf.d/
+=======
+>>>>>>> rebase-upstream
   ckan:
     container_name: ckan
     build:
@@ -52,8 +55,7 @@ services:
 
   solr:
     container_name: solr
-    build:
-      context: solr/
+    image: ckan/ckan-solr:2.9-solr8
     volumes:
       - solr_data:/opt/solr/server/solr/ckan/data/index
 
