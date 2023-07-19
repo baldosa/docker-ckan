@@ -8,7 +8,7 @@ ENV PIP_SRC=${SRC_DIR}
 ENV CKAN_STORAGE_PATH=/var/lib/ckan
 ENV GIT_URL=https://github.com/ckan/ckan.git
 # CKAN version to build
-ENV GIT_BRANCH=ckan-2.8.10
+ENV GIT_BRANCH=ckan-2.8.12
 # Customize these on the .env file if needed
 ENV CKAN_SITE_URL=http://localhost:5000
 ENV CKAN__PLUGINS image_view text_view recline_view datastore datapusher envvars
@@ -24,6 +24,7 @@ RUN apk add --no-cache tzdata \
         apache2-utils \
         libxml2 \
         libxslt \
+        mailcap \
         musl-dev \
         libmagic \
         curl \
@@ -63,6 +64,7 @@ RUN pip install -e git+${GIT_URL}@${GIT_BRANCH}#egg=ckan && \
     pip install -e git+https://github.com/okfn/ckanext-envvars.git#egg=ckanext-envvars && \
     # Create and update CKAN config
     paster --plugin=ckan make-config ckan ${CKAN_INI} && \
+    paster --plugin=ckan config-tool ${CKAN_INI} "beaker.session.secret = " && \
     paster --plugin=ckan config-tool ${CKAN_INI} "ckan.plugins = ${CKAN__PLUGINS}" && \
     paster --plugin=ckan config-tool ${CKAN_INI} "ckan.site_url = ${CKAN__SITE_URL}"
 

@@ -1,17 +1,24 @@
-FROM alpine:3.12
+FROM alpine:3.16
 
 # Internals, you probably don't need to change these
 ENV APP_DIR=/srv/app
 ENV SRC_DIR=/srv/app/src
-ENV CKAN_INI=${APP_DIR}/production.ini
+ENV CKAN_INI=${APP_DIR}/ckan.ini
 ENV PIP_SRC=${SRC_DIR}
 ENV CKAN_STORAGE_PATH=/var/lib/ckan
 ENV GIT_URL=https://github.com/ckan/ckan.git
 # CKAN version to build
-ENV GIT_BRANCH=ckan-2.7.12
+ENV GIT_BRANCH=ckan-2.10.1
 # Customize these on the .env file if needed
 ENV CKAN_SITE_URL=http://localhost:5000
 ENV CKAN__PLUGINS image_view text_view recline_view datastore datapusher envvars
+
+# UWSGI options
+ENV UWSGI_HARAKIRI=50
+
+# optional. If the "expire_api_token" is enabled you will need this.
+ENV DATAPUSHER_TOKEN_EXPIRES_IN=
+ENV DATAPUSHER_TOKEN_EXPIRES_UNIT=
 
 WORKDIR ${APP_DIR}
 
@@ -20,14 +27,20 @@ RUN apk add --no-cache tzdata \
         git \
         gettext \
         postgresql-client \
-        python2 \
-        apache2-utils \
+        python3 \
         libxml2 \
         libxslt \
         musl-dev \
+        uwsgi \
+        uwsgi-http \
+        uwsgi-corerouter \
+        uwsgi-python \
+        py3-gevent \
+        uwsgi-gevent \
         libmagic \
         curl \
         patch \
+        bash \
         sudo && \
     # Packages to build CKAN requirements and plugins
     apk add --no-cache --virtual .build-deps \
@@ -37,36 +50,36 @@ RUN apk add --no-cache tzdata \
         g++ \
         autoconf \
         automake \
-	libtool \
-        python2-dev \
+    	libtool \
+        python3-dev \
         libxml2-dev \
         libxslt-dev \
-        linux-headers && \
+        linux-headers \
+        openssl-dev \
+        libffi-dev \
+        cargo && \
     # Create SRC_DIR
     mkdir -p ${SRC_DIR} && \
-    # Install pip, supervisord and uwsgi
-    curl -o ${SRC_DIR}/get-pip.py https://bootstrap.pypa.io/pip/2.7/get-pip.py && \
-    python ${SRC_DIR}/get-pip.py 'pip==20.3.3' && \
-    pip install supervisor uwsgi && \
+    # Install pip, supervisord
+    curl -o ${SRC_DIR}/get-pip.py https://bootstrap.pypa.io/get-pip.py && \
+    python3 ${SRC_DIR}/get-pip.py && \
+    pip3 install supervisor && \
     mkdir /etc/supervisord.d && \
-    #pip wheel --wheel-dir=/wheels uwsgi gevent && \
     rm -rf ${SRC_DIR}/get-pip.py
 
 COPY common/supervisord.conf /etc
 
 # Install CKAN
-RUN pip install -e git+${GIT_URL}@${GIT_BRANCH}#egg=ckan && \
+RUN pip3 install -e git+${GIT_URL}@${GIT_BRANCH}#egg=ckan && \
     cd ${SRC_DIR}/ckan && \
     cp who.ini ${APP_DIR} && \
-    # Workaround to solve https://github.com/psycopg/psycopg2/issues/594 in Alpine 3.7
-	sed -i -e "s/psycopg2==2.4.5/psycopg2==2.7.3.2/g" requirements.txt && \
-    pip install --no-binary :all: -r requirements.txt && \
+    pip3 install --no-binary markdown -r requirements.txt && \
     # Install CKAN envvars to support loading config from environment variables
-    pip install -e git+https://github.com/okfn/ckanext-envvars.git#egg=ckanext-envvars && \
+    pip3 install -e git+https://github.com/okfn/ckanext-envvars.git#egg=ckanext-envvars && \
     # Create and update CKAN config
-    paster --plugin=ckan make-config ckan ${CKAN_INI} && \
-    paster --plugin=ckan config-tool ${CKAN_INI} "ckan.plugins = ${CKAN__PLUGINS}" && \
-    paster --plugin=ckan config-tool ${CKAN_INI} "ckan.site_url = ${CKAN__SITE_URL}"
+    ckan generate config ${CKAN_INI} && \
+    ckan config-tool ${CKAN_INI} "beaker.session.secret = " && \
+    ckan config-tool ${CKAN_INI} "ckan.plugins = ${CKAN__PLUGINS}"
 
 # Create a local user and group to run the app
 RUN addgroup -g 92 -S ckan && \
@@ -76,9 +89,10 @@ RUN addgroup -g 92 -S ckan && \
 RUN mkdir -p $CKAN_STORAGE_PATH && \
     chown -R ckan:ckan $CKAN_STORAGE_PATH
 
-COPY 2.7/setup/prerun.py ${APP_DIR}
-COPY 2.7/setup/supervisor.worker.conf /etc/supervisord.d/worker.conf
-COPY 2.7/setup/start_ckan.sh ${APP_DIR}
+COPY 2.10/setup/prerun.py ${APP_DIR}
+COPY 2.10/setup/supervisor.worker.conf /etc/supervisord.d/worker.conf
+COPY 2.10/setup/start_ckan.sh ${APP_DIR}
+ADD https://raw.githubusercontent.com/ckan/ckan/${GIT_BRANCH}/wsgi.py ${APP_DIR}
 
 # Create entrypoint directory for children image scripts
 ONBUILD RUN mkdir /docker-entrypoint.d
