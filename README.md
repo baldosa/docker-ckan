@@ -1,7 +1,11 @@
-# Docker Compose setup for CKAN
+# Docker Compose setup for CKAN [Not Maintained]
 
-[![CKAN Versions](https://img.shields.io/badge/CKAN%20Versions-2.7.12%20|%202.8.10%20|%202.9.5%20|%20master%20-success.svg)](https://docs.ckan.org/en/latest/changelog.html)
-[![Docker Pulls](https://img.shields.io/docker/pulls/openknowledge/ckan-base.svg)](https://hub.docker.com/r/openknowledge/ckan-base)
+| ⚠️ Not maintained :warning: |
+| --- | 
+| These images are deprecated and are no longer maintained. Please use the official CKAN Docker images instead: |
+| https://github.com/ckan/ckan-docker|
+| For more information see: https://github.com/okfn/docker-ckan/issues/129 |
+
 
 
 * [Overview](#overview)
@@ -22,9 +26,9 @@ This is a set of Docker images and configuration files to run a CKAN site.
 
 | CKAN version | Docker tag production | Docker tag development | Notes |
 | --- | --- | --- | --- |
-| 2.7 | `openknowledge/ckan-base:2.7` | `openknowledge/ckan-dev:2.7` | |
-| 2.8 | `openknowledge/ckan-base:2.8` | `openknowledge/ckan-dev:2.8` | |
-| 2.9 | `openknowledge/ckan-base:2.9` | `openknowledge/ckan-dev:2.9` | If you need Python 2 images use the `2.9-py2` tags (not recommended) |
+| 2.8    | `openknowledge/ckan-base:2.8`,  `openknowledge/ckan-base:2.8.12`   | `openknowledge/ckan-dev:2.8`,  `openknowledge/ckan-dev:2.8.12` | |
+| 2.9    | `openknowledge/ckan-base:2.9`, `openknowledge/ckan-base:2.9.9`    | `openknowledge/ckan-dev:2.9`, `openknowledge/ckan-dev:2.9.9`  | If you need Python 2 images use the `2.9-py2` tags (not recommended) |
+| 2.10b    | `openknowledge/ckan-base:2.10`, `openknowledge/ckan-base:2.10.1`    | `openknowledge/ckan-dev:2.10`, `openknowledge/ckan-dev:2.10.1`  |CKAN 2.10 is currently in beta |
 | master | `openknowledge/ckan-base:master` | `openknowledge/ckan-dev:master` | The `master` images are updated daily so they might be slightly out of date |
 
 
@@ -42,7 +46,7 @@ The site is configured via env vars (the base CKAN image loads [ckanext-envvars]
 
 Copy the included `.env.example` and rename it to `.env` to modify it depending on your own needs.
 
-Using the default values on the `.env.example` file will get you a working CKAN instance. There is a sysadmin user created by default with the values defined in `CKAN_SYSADMIN_NAME` and `CKAN_SYSADMIN_PASSWORD`(`ckan_admin` and `test1234` by default). I shouldn't be telling you this but obviously don't run any public CKAN instance with the default settings.
+Using the default values on the `.env.example` file will get you a working CKAN instance. There is a sysadmin user created by default with the values defined in `CKAN_SYSADMIN_NAME` and `CKAN_SYSADMIN_PASSWORD`(`ckan_admin` and `test1234` by default). I shouldn't be telling you this but obviously don't run any public CKAN instance with the default settings. Make sure to set up proper passwords and secret keys in your `.env` file.
 
 To build the images:
 
